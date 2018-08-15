@@ -1,0 +1,39 @@
+#!/bin/sh
+
+CURRENT_COMMIT_MESSAGE=$(cat $1 | egrep -v '(^#|^\s*$|^\s*\t*#)')
+
+BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+
+PREFIX=`git config tracker.branchprefix`
+
+if [ -n "${PREFIX}" ]; then
+    # handle only brances with prefix
+    IS_FEATURE=`echo "${BRANCH_NAME}" | grep feature`
+    if [ -z "${IS_FEATURE}" ]; then
+        exit 0;
+    fi
+fi
+
+ISSUE_ID=$(git config branch."${BRANCH_NAME}".issueid)
+ISSUE_SUMMARY=$(git config branch."${BRANCH_NAME}".issuesummary)
+DELIMITER=":"
+ISSUE_FULL_COMMIT_MESSAGE="$ISSUE_ID$DELIMITER ${ISSUE_SUMMARY}"
+
+if [ -n "${ISSUE_ID}" ] && [ -n "${ISSUE_SUMMARY}" ]; then
+    case "${CURRENT_COMMIT_MESSAGE}" in
+        *${ISSUE_FULL_COMMIT_MESSAGE}*)
+            echo "commit message is not changed, because it already contains tracker message"
+            ;;
+        *${ISSUE_ID}*)
+            echo "commit message is not changed, because it already contains tracker issue id"
+            ;;
+        *)
+            if [ -n "$CURRENT_COMMIT_MESSAGE" ]; then
+                new_commit_message="${ISSUE_ID}${DELIMITER} ${CURRENT_COMMIT_MESSAGE}"
+            else
+                new_commit_message="${ISSUE_FULL_COMMIT_MESSAGE}"
+            fi
+            echo $new_commit_message > $1
+            ;;
+    esac
+fi
