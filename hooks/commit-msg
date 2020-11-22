@@ -8,7 +8,7 @@ PREFIX=`git config tracker.branchprefix`
 
 if [ -n "${PREFIX}" ]; then
     # handle only brances with prefix
-    IS_FEATURE=`echo "${BRANCH_NAME}" | grep feature`
+    IS_FEATURE=`echo "${BRANCH_NAME}" | grep ${PREFIX}`
     if [ -z "${IS_FEATURE}" ]; then
         exit 0;
     fi
