@@ -1,4 +1,7 @@
-### tool to simplify git development with [yandex.tracker](https://yandex.com/tracker/)
+### [Deprecated]
+Use this more general [tool](https://github.com/yantonov/ticket-commit-msg)
+
+### Tool to simplify git development with [yandex.tracker](https://yandex.com/tracker/)
 
 #### Purpose
 Automatically add ticket number (id) (or number and summary) to commit messages.
